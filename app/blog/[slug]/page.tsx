@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { fetchBlogBySlug } from "@/lib/property-api";
+import { fetchBlogBySlug } from "@/lib/blog-api";
 
 type BlogDetailsPageProps = {
   params: Promise<{

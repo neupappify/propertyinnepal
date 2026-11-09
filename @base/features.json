@@ -1,0 +1,12 @@
+{
+    "native.cache": 
+    {
+        "type": "redis",
+        "interactionLayer": "ioredis",
+        "isRequired": true
+    },
+    "native.intelligence":
+    {
+        "isRequired": true
+    }
+}

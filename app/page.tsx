@@ -2,19 +2,19 @@ import Link from "next/link";
 import { DragScrollCarousel } from "@/components/drag-scroll-carousel";
 import PropertyCardS1 from "@/components/estate/propertyCard.s1";
 import { HeroBackgroundVideo } from "@/components/hero-background-video";
+import { estate } from "@neup/logica/estate";
 import {
   formatCountLabel,
-  fetchBlogs,
-  fetchPremiumProperties,
-  fetchPropertyListings,
   formatPropertyPrice,
+  mapProperty,
+  getListingResponse,
   getBathroomValue,
   getBedroomValue,
   getDisplayValue,
   getSpaceValue,
-  type BlogItem,
   type PropertyItem,
-} from "@/lib/property-api";
+} from "@/lib/property-presentation";
+import { fetchBlogs, type BlogItem } from "@/lib/blog-api";
 
 type HomepageReview = {
   author: string;
@@ -347,7 +347,7 @@ function LinkedSectionTitle({
   title: string;
 }) {
   return (
-    <h2 className="section-title-link-group flex flex-wrap items-baseline gap-3 font-display text-[1.4rem] font-bold leading-tight text-slate-950 sm:text-[1.85rem] lg:text-[2.05rem]">
+    <h2 className="section-title section-title-link-group flex flex-wrap items-baseline gap-3 font-display font-bold leading-tight text-slate-950">
       <Link
         href={href}
         className="section-title-text-link inline-flex text-slate-950 transition-colors duration-300 hover:text-brand-deep focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-300/40"
@@ -373,13 +373,21 @@ function LinkedSectionTitle({
 }
 
 export default async function Home() {
-  const [premiumPayload, recentPayload, blogsPayload] = await Promise.all([
-    fetchPremiumProperties(1),
-    fetchPropertyListings({ page: 1 }),
+  const [premiumResponse, recentResponse, blogsPayload] = await Promise.all([
+    estate.listings.list({ agencyId: process.env.NEUP_ESTATE_PROJECT_ID, status: "active", limit: 15, offset: 0 }),
+    estate.listings.list({ agencyId: process.env.NEUP_ESTATE_PROJECT_ID, status: "active", limit: 12, offset: 0 }),
     fetchBlogs(1),
   ]);
-  const premiumListings = premiumPayload.data ?? [];
-  const recentListings = recentPayload.items ?? [];
+  const premiumData = getListingResponse(premiumResponse.body);
+  const recentData = getListingResponse(recentResponse.body);
+  if (!premiumResponse.ok) {
+    console.error("Homepage active listing request failed", premiumResponse.status, premiumResponse.body);
+  }
+  if (!recentResponse.ok) {
+    console.error("Homepage recent listing request failed", recentResponse.status, recentResponse.body);
+  }
+  const premiumListings = premiumData.listings.map(mapProperty);
+  const recentListings = recentData.listings.map(mapProperty);
   const latestBlogs = (blogsPayload.data ?? []).slice(0, 8);
   const clientReviews = fallbackClientReviews;
   const featuredListings = premiumListings
@@ -391,7 +399,7 @@ export default async function Home() {
   const recentPreviewListings = recentListings.slice(0, 8);
 
   return (
-    <>
+    <div className="homepage-compact">
       <section className="relative isolate -mt-[88px] flex min-h-[78svh] w-full overflow-hidden pt-[88px] text-white">
         <HeroBackgroundVideo
           src="/hero-video.mp4"
@@ -404,7 +412,7 @@ export default async function Home() {
               Find your next home in Nepal
             </p>
 
-            <h1 className="mt-6 font-display text-3xl font-semibold leading-[1.05] tracking-[-0.04em] text-white [text-shadow:0_2px_10px_rgba(2,6,23,0.9),0_10px_30px_rgba(2,6,23,0.7),0_0_22px_rgba(2,6,23,0.55)] sm:text-4xl lg:text-6xl">
+            <h1 className="section-title-xl mt-6 font-display font-semibold leading-[1.05] tracking-[-0.04em] text-white [text-shadow:0_2px_10px_rgba(2,6,23,0.9),0_10px_30px_rgba(2,6,23,0.7),0_0_22px_rgba(2,6,23,0.55)]">
               घर किन्दा सम्झिनु ल !
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/90 [text-shadow:0_2px_8px_rgba(2,6,23,0.9),0_8px_22px_rgba(2,6,23,0.65)] sm:text-lg sm:leading-8">
@@ -457,10 +465,10 @@ export default async function Home() {
 
       <section className="py-9 lg:py-11">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-8 lg:pl-24 xl:pl-28 2xl:pl-0">
-          <h2 className="font-display text-[1.35rem] font-bold leading-tight text-slate-950 sm:text-[1.75rem] lg:text-[1.95rem]">
+          <h2 className="section-title font-display font-bold leading-tight text-slate-950">
             Property Categories
           </h2>
-          <p className="mt-1 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+          <p className="section-description mt-1 max-w-2xl leading-7 text-slate-600">
             Browse homes, land, rentals, and commercial spaces by property type.
           </p>
         </div>
@@ -521,7 +529,7 @@ export default async function Home() {
               ariaLabel="View premium properties"
             />
           </div>
-          <p className="mt-0.5 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+          <p className="section-description mt-0.5 max-w-2xl leading-7 text-slate-600">
             The best properties for your premium lifestyle.
           </p>
         </div>
@@ -566,7 +574,7 @@ export default async function Home() {
                 ariaLabel="View recent properties"
               />
             </div>
-            <p className="mt-0.5 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+            <p className="section-description mt-0.5 max-w-2xl leading-7 text-slate-600">
               Freshly added properties from the latest live inventory.
             </p>
           </div>
@@ -629,7 +637,7 @@ export default async function Home() {
           </div>
 
           <div className="min-w-0">
-            <h2 className="font-display text-[1.75rem] font-bold leading-tight text-slate-950 sm:text-[2.25rem] lg:text-[2.55rem]">
+            <h2 className="section-title font-display font-bold leading-tight text-slate-950">
               Why Choose Us?
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-8 text-slate-700 break-words">
@@ -664,10 +672,10 @@ export default async function Home() {
       <section className="py-14 text-slate-950">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-8 lg:pl-24 xl:pl-28 2xl:pl-0">
           <div className="max-w-3xl">
-            <h2 className="font-display text-[1.4rem] font-bold leading-tight sm:text-[1.85rem] lg:text-[2.05rem]">
+            <h2 className="section-title font-display font-bold leading-tight">
               Reviews From Our Clients
             </h2>
-            <p className="mt-1 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+            <p className="section-description mt-1 max-w-2xl leading-7 text-slate-600">
               What people say after working with our team to buy, sell, or shortlist properties.
             </p>
           </div>
@@ -729,7 +737,7 @@ export default async function Home() {
                 ariaLabel="View latest blogs"
               />
             </div>
-            <p className="mt-0.5 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+            <p className="section-description mt-0.5 max-w-2xl leading-7 text-slate-600">
               Fresh real estate guidance, market updates, and property insights.
             </p>
           </div>
@@ -765,6 +773,6 @@ export default async function Home() {
         </section>
       ) : null}
 
-    </>
+    </div>
   );
 }

@@ -18,11 +18,12 @@ type TeamMember = {
 };
 
 export default async function TeamPage() {
-  const teamResponse = await sites().members.get();
-  const teamMembers: TeamMember[] = (teamResponse.body.members ?? []).map((member) => ({
+  const teamResponse = await sites().people.members.get();
+  const members = Array.isArray(teamResponse.body.data) ? teamResponse.body.data : [];
+  const teamMembers: TeamMember[] = members.map((member) => ({
     name: member.name,
     role: member.role,
-    image: "",
+    image: member.displayImage ?? "",
     socials: {},
   }));
 

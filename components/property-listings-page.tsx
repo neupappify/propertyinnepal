@@ -8,7 +8,7 @@ import {
   getDisplayValue,
   getSpaceValue,
   type PropertyItem,
-} from "@/lib/property-api";
+} from "@/lib/property-presentation";
 
 type PropertyListingsPageProps = {
   emptyMessage: string;

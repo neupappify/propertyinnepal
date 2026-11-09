@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { PropertyListingsPage } from "@/components/property-listings-page";
-import { fetchPropertyListings, type ListingPagePayload } from "@/lib/property-api";
+import { estate } from "@neup/logica/estate";
+import { mapProperty, type ListingPagePayload } from "@/lib/property-presentation";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type RentPageProps = {
   searchParams?: Promise<{
@@ -25,7 +29,15 @@ export default async function RentPage({ searchParams }: RentPageProps) {
   let loadError = false;
 
   try {
-    listings = await fetchPropertyListings({ page, purpose: "rent" });
+    const response = await estate.listings.search({
+      agencyId: process.env.NEUP_ESTATE_PROJECT_ID,
+      limit: 12,
+      offset: (page - 1) * 12,
+      filters: { purpose: "rent" },
+    });
+    if (!response.ok) throw new Error(`Listing search failed: ${response.status}`);
+    const records = response.body?.listings ?? [];
+    listings = { currentPage: page, items: records.map(mapProperty), totalItems: response.body?.totalCount ?? records.length, totalPages: Math.max(1, Math.ceil((response.body?.totalCount ?? records.length) / 12)) };
   } catch {
     loadError = true;
   }

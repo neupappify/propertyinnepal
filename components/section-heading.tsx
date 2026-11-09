@@ -18,10 +18,10 @@ export function SectionHeading({
       <p className="text-xs font-semibold uppercase tracking-[0.35em] text-brand-deep/70">
         {eyebrow}
       </p>
-      <h2 className="mt-4 font-display text-3xl leading-tight text-slate-950 sm:text-4xl">
+      <h2 className="section-title mt-4 font-display leading-tight text-slate-950">
         {title}
       </h2>
-      <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+      <p className="section-description mt-4 leading-7 text-slate-600">
         {description}
       </p>
     </div>

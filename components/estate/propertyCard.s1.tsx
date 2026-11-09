@@ -171,7 +171,7 @@ export function PropertyCardS1({
       </div>
 
       <div className="flex flex-1 flex-col px-4 py-3">
-        <h3 className="line-clamp-2 text-[1.22rem] font-bold leading-[1.26] text-slate-950 transition-colors duration-300 group-hover/card:text-brand-deep">
+        <h3 className="card-title line-clamp-2 font-bold leading-[1.26] text-slate-950 transition-colors duration-300 group-hover/card:text-brand-deep">
           {href ? (
             <Link
               href={href}
@@ -189,7 +189,7 @@ export function PropertyCardS1({
         </h3>
 
         <div className="mt-1.5 flex h-7 items-center">
-          <p className="min-w-0 truncate whitespace-nowrap text-[1.05rem] font-normal leading-none text-slate-950 transition-colors duration-300 group-hover/card:text-brand-deep">
+          <p className="card-desc min-w-0 truncate whitespace-nowrap font-normal leading-none text-slate-950 transition-colors duration-300 group-hover/card:text-brand-deep">
             {price} <span className="text-sm font-normal">/ {pricePeriod}</span>
           </p>
         </div>
@@ -197,8 +197,8 @@ export function PropertyCardS1({
         <div className="my-2 h-px bg-slate-200" aria-hidden="true" />
 
         <div className="flex h-8 min-w-0 items-center gap-4 text-[0.88rem] font-normal leading-5 text-slate-600">
-          {facts.map((fact) => (
-            <div key={fact.label} className="flex min-w-0 items-center gap-1.5">
+          {facts.map((fact, index) => (
+            <div key={`${fact.icon ?? "fact"}-${index}`} className="flex min-w-0 items-center gap-1.5">
               <span className="shrink-0 text-slate-500">
                 <FactIcon icon={fact.icon} />
               </span>

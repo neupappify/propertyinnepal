@@ -11,12 +11,11 @@ import { PropertyLifeAroundArea } from "@/components/property-life-around-area";
 import { PropertyPhotoGallery } from "@/components/property-photo-gallery";
 import { PropertyShareButton } from "@/components/property-share-button";
 import {
-  fetchPremiumProperties,
   mapProperty,
   formatPropertyPrice,
   type PropertyFeature,
   type PropertyItem,
-} from "@/lib/property-api";
+} from "@/lib/property-presentation";
 import { PROPERTY_AGENT_FALLBACK } from "./property-agent";
 
 type PropertyDetailsPageProps = {
@@ -29,18 +28,21 @@ export async function generateMetadata({
   params,
 }: PropertyDetailsPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const response = await estate.property(slug).get();
+  const response = await estate.listings(slug).get([
+    "id", "customId", "slug", "title", "description", "purpose", "category", "types",
+    "images", "location", "price", "pricing", "amenities", "listings.details", "listings.spacing",
+  ]);
   if (!response.ok && response.status !== 404) {
     throw new Error(`Failed to fetch property: ${response.status}`);
   }
 
-  if (!response.body?.property) {
+  if (!response.body?.listing) {
     return {
       title: "Property Not Found",
     };
   }
 
-  const property = mapProperty(response.body.property);
+  const property = mapProperty(response.body.listing);
 
   return {
     title: property.name,
@@ -408,20 +410,25 @@ function RecommendedPropertyCard({ property }: { property: PropertyItem }) {
 
 export default async function PropertyDetailsPage({ params }: PropertyDetailsPageProps) {
   const { slug } = await params;
-  const [response, recommendedPayload] = await Promise.all([
-    estate.property(slug).get(),
-    fetchPremiumProperties(),
+  const [response, recommendedResponse] = await Promise.all([
+    estate.listings(slug).get([
+      "id", "customId", "slug", "title", "description", "purpose", "category", "types",
+      "images", "location", "price", "pricing", "amenities", "listings.details", "listings.spacing",
+      "representatives.*",
+    ]),
+    estate.listings.search({ agencyId: process.env.NEUP_ESTATE_PROJECT_ID, limit: 15, offset: 0 }),
   ]);
 
   if (!response.ok && response.status !== 404) {
     throw new Error(`Failed to fetch property: ${response.status}`);
   }
-  if (!response.body?.property) {
+  if (!response.body?.listing) {
     notFound();
   }
-  const property = mapProperty(response.body.property);
+  const property = mapProperty(response.body.listing);
 
-  const recommendedProperties = recommendedPayload.data
+  const recommendedRecords = recommendedResponse.body?.listings ?? [];
+  const recommendedProperties = recommendedRecords.map(mapProperty)
     .filter((item) => item.id !== property.id && item.slug !== property.slug)
     .slice(0, 8);
   const roomsAndSpacingFeatures = getRoomsAndSpacingFeatures(property.features, property.area);

@@ -201,3 +201,163 @@ footer {
 .section-title-link-group:has(.section-title-icon-link:focus-visible) .section-title-underline {
   background-size: 100% 2px;
 }
+
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600 !important;
+}
+
+@media (min-width: 640px) {
+  .section-title {
+    font-size: 1.6rem;
+  }
+}
+
+.section-title-xl {
+  font-size: clamp(2rem, 5vw, 3.75rem);
+}
+
+.section-description {
+  font-size: 1rem;
+}
+
+.section-title + .section-description {
+  margin-top: 0.5rem !important;
+}
+
+.card-title {
+  font-size: 1.125rem;
+}
+
+.card-title-large {
+  font-size: 1.25rem;
+}
+
+.card-title-small {
+  font-size: 1rem;
+}
+
+.card-desc {
+  font-size: 0.875rem;
+}
+
+.card-desc-large {
+  font-size: 1rem;
+}
+
+.card-desc-small {
+  font-size: 0.75rem;
+}
+
+/* Keep the homepage content denser without changing shared page components. */
+.homepage-compact > section:not(:first-child) {
+  padding-top: 2.1rem !important;
+  padding-bottom: 2.1rem !important;
+}
+
+.homepage-compact > section:first-child > div.relative {
+  padding-top: 3.5rem !important;
+  padding-bottom: 3.5rem !important;
+}
+
+.homepage-compact > section:first-child h1 {
+  margin-top: 1.25rem;
+}
+
+.homepage-compact > section:first-child h1 + p {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.homepage-compact > section:first-child form {
+  margin-top: 1.25rem;
+}
+
+.homepage-compact > section:not(:first-child) [class*="mt-6"] {
+  margin-top: 1.25rem;
+}
+
+.homepage-compact > section:not(:first-child) [class*="mt-7"] {
+  margin-top: 1.15rem;
+}
+
+.homepage-compact .group\/category {
+  min-height: 7.1rem;
+  padding: 0.75rem;
+}
+
+.homepage-compact .group\/category > span:nth-child(2) {
+  width: 2.9rem;
+  height: 2.9rem;
+}
+
+.homepage-compact .group\/category > span:nth-child(2) svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.homepage-compact .group\/category > span:nth-child(3) {
+  margin-top: 0.5rem;
+  font-size: 0.76rem;
+}
+
+.homepage-compact .group\/category > span:nth-child(4) {
+  margin-top: 0.4rem;
+}
+
+.homepage-compact article.group\/card {
+  border-radius: 1.125rem;
+}
+
+.homepage-compact article.group\/card > div:first-child {
+  aspect-ratio: 1.58;
+}
+
+.homepage-compact article.group\/card > div:last-child {
+  padding: 0.7rem 0.85rem;
+}
+
+.homepage-compact article.group\/card h3 {
+  line-height: 1.2;
+}
+
+.homepage-compact article.group\/card p {
+  line-height: 1.35;
+}
+
+.homepage-compact article.group\/card > div:last-child > div:last-child {
+  gap: 0.65rem;
+  font-size: 0.78rem;
+}
+
+.homepage-compact figure {
+  min-height: 11.5rem;
+  padding: 0.95rem;
+}
+
+.homepage-compact figure img {
+  width: 2.65rem;
+  height: 2.65rem;
+}
+
+.homepage-compact figure blockquote {
+  margin-top: 0.65rem;
+  line-height: 1.4;
+}
+
+.homepage-compact article.group\/blog > div:last-child {
+  padding: 1rem;
+}
+
+.homepage-compact article.group\/blog h3 {
+  margin-top: 0.65rem;
+}
+
+.homepage-compact article.group\/blog p {
+  margin-top: 0.65rem;
+}
+
+.homepage-compact article.group\/blog a:last-child {
+  padding-top: 1rem;
+}
